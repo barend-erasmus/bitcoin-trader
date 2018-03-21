@@ -1,0 +1,34 @@
+{
+  "name": "bitcoin-trader",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "bitx": "^1.5.1",
+    "moment": "^2.21.0",
+    "stats-lite": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^9.4.7",
+    "gulp": "^3.9.1",
+    "gulp-clean": "^0.4.0",
+    "run-sequence": "^2.2.1"
+  },
+  "scripts": {
+    "build": "gulp build & tsc",
+    "debug": "npm run build & node --inspect ./dist/app.js --dev",
+    "lint": "tslint ./src/**/*.ts --fix --exclude ./src/**/*.d.ts",
+    "start": "npm run build & node ./dist/app.js --dev",
+    "test": "npm run build & mocha --timeout 30000 ./dist/**/*.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/barend-erasmus/bitcoin-trader.git"
+  },
+  "author": "Barend Erasmus",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/barend-erasmus/bitcoin-trader/issues"
+  },
+  "homepage": "https://github.com/barend-erasmus/bitcoin-trader#readme"
+}
