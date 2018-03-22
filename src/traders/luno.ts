@@ -1,7 +1,7 @@
 import * as BitX from 'bitx';
 
 import { State } from '../enums/state';
-import { IAlgorithm } from '../interfaces/algorithm';
+import { ITraderAlgorithm } from '../interfaces/trader-algorithm';
 
 export class LunoTrader {
 
@@ -18,9 +18,11 @@ export class LunoTrader {
     private maxZARBuyLimit: number = 200;
 
     constructor(
-        private algorithm: IAlgorithm,
+        private keyId: string,
+        private keySecret: string,
+        private traderAlgorithm: ITraderAlgorithm,
     ) {
-        this.client = new BitX(null, null);
+        this.client = new BitX(keyId, keySecret);
     }
 
     public async tick(): Promise<void> {
@@ -28,26 +30,26 @@ export class LunoTrader {
 
         this.currentBTCPrice = await this.getCurrentBTCPrice();
 
-        this.algorithm.onChange(this.currentBTCPrice);
+        this.traderAlgorithm.onChange(this.currentBTCPrice);
 
-        const shouldBuy: boolean = this.algorithm.shouldBuy(this.state);
+        const shouldBuy: boolean = this.traderAlgorithm.shouldBuy(this.state);
 
         if (shouldBuy) {
             // const result: any = await this.postBuyOrder(Math.floor(this.maxZARBuyLimit / this.currentBTCPrice * 1000000) / 1000000, this.currentBTCPrice);
 
-            this.algorithm.onBuy(this.currentBTCPrice);
+            this.traderAlgorithm.onBuy(this.currentBTCPrice);
 
             this.state = State.WaitingToSell;
 
             return;
         }
 
-        const shouldSell: boolean = this.algorithm.shouldSell(this.state);
+        const shouldSell: boolean = this.traderAlgorithm.shouldSell(this.state);
 
         if (shouldSell) {
             // const result: any = await this.postSellOrder(Math.floor(this.currentBTCBalance * 1000000) / 1000000, this.currentBTCPrice);
 
-            this.algorithm.onSell(this.currentBTCPrice);
+            this.traderAlgorithm.onSell(this.currentBTCPrice);
 
             this.state = State.WaitingToBuy;
 

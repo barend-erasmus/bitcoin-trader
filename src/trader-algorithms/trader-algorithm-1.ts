@@ -1,13 +1,14 @@
 import * as fs from 'fs';
 import * as moment from 'moment';
+import * as path from 'path';
 import * as statsLite from 'stats-lite';
 
 import { State } from '../enums/state';
-import { IAlgorithm } from '../interfaces/algorithm';
+import { ITraderAlgorithm } from '../interfaces/trader-algorithm';
 import { DataPoint } from '../models/data-point';
 import { Queue } from '../models/queue';
 
-export class Algorithm1 implements IAlgorithm {
+export class TraderAlgorithm1 implements ITraderAlgorithm {
 
     private currentAverageGrowth: number = null;
 
@@ -37,22 +38,15 @@ export class Algorithm1 implements IAlgorithm {
         this.dataPointQueue.enqueue(new DataPoint(price, new Date()));
         console.log(`Price updated ${price}`);
 
+        this.setGrowths();
+
+        this.checkEmergencySellRules(price);
+
         if (this.dataPointQueue.isFull()) {
-            this.currentAverageGrowth = this.calculateAverageGrowth();
-            // console.log(`Average Growth: ${this.currentAverageGrowth}`);
+            console.log(`Average Growth: ${this.currentAverageGrowth}`);
+            console.log(`Delta Average Growth: ${this.deltaAverageGrowth}`);
 
-            if (this.previousAverageGrowth) {
-                this.deltaAverageGrowth = this.currentAverageGrowth - this.previousAverageGrowth;
-                // console.log(`Delta Average Growth: ${this.deltaAverageGrowth}`);
-
-                fs.appendFileSync('log.txt', `${moment().format('YYYY-MM-DD HH:mm:ss')};${this.dataPointQueue.getLast().price.toString().replace('.', ',')};${this.currentAverageGrowth.toString().replace('.', ',')};${this.deltaAverageGrowth.toString().replace('.', ',')}\r\n`);
-            }
-
-            this.previousAverageGrowth = this.currentAverageGrowth;
-        }
-
-        if (this.previousBuyPrice && (price / this.previousBuyPrice * 100) - 100 < this.emergencySellThreshold) {
-            this.emergencySell = true;
+            fs.appendFileSync(path.join(__dirname, 'data.log'), `${moment().format('YYYY-MM-DD HH:mm:ss')};${this.dataPointQueue.getLast().price.toString().replace('.', ',')};${this.currentAverageGrowth.toString().replace('.', ',')};${this.deltaAverageGrowth.toString().replace('.', ',')}\r\n`);
         }
     }
 
@@ -93,6 +87,18 @@ export class Algorithm1 implements IAlgorithm {
         return false;
     }
 
+    private setGrowths(): void {
+        if (this.dataPointQueue.isFull()) {
+            this.currentAverageGrowth = this.calculateAverageGrowth();
+
+            if (this.previousAverageGrowth) {
+                this.deltaAverageGrowth = this.currentAverageGrowth - this.previousAverageGrowth;
+            }
+
+            this.previousAverageGrowth = this.currentAverageGrowth;
+        }
+    }
+
     private calculateAverageGrowth(): number {
         const growth: number[] = [];
 
@@ -105,5 +111,13 @@ export class Algorithm1 implements IAlgorithm {
         }
 
         return statsLite.mean(growth);
+    }
+
+    private checkEmergencySellRules(price: number): void {
+        if (this.currentAverageGrowth < 0) {
+            this.emergencySell = true;
+        } else if (this.previousBuyPrice && (price / this.previousBuyPrice * 100) - 100 < this.emergencySellThreshold) {
+            this.emergencySell = true;
+        }
     }
 }

@@ -1,6 +1,6 @@
 import { State } from '../enums/state';
 
-export interface IAlgorithm {
+export interface ITraderAlgorithm {
 
     onBuy(price: number): void;
 
