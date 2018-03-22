@@ -33,9 +33,11 @@ export class LunoTrader {
         const shouldBuy: boolean = this.algorithm.shouldBuy(this.state);
 
         if (shouldBuy) {
-            const result: any = await this.postBuyOrder(Math.floor(this.maxZARBuyLimit / this.currentBTCPrice * 1000000) / 1000000, this.currentBTCPrice);
+            // const result: any = await this.postBuyOrder(Math.floor(this.maxZARBuyLimit / this.currentBTCPrice * 1000000) / 1000000, this.currentBTCPrice);
 
             this.algorithm.onBuy(this.currentBTCPrice);
+
+            this.state = State.WaitingToSell;
 
             return;
         }
@@ -43,9 +45,11 @@ export class LunoTrader {
         const shouldSell: boolean = this.algorithm.shouldSell(this.state);
 
         if (shouldSell) {
-            const result: any = await this.postSellOrder(Math.floor(this.currentBTCBalance * 1000000) / 1000000, this.currentBTCPrice);
+            // const result: any = await this.postSellOrder(Math.floor(this.currentBTCBalance * 1000000) / 1000000, this.currentBTCPrice);
 
             this.algorithm.onSell(this.currentBTCPrice);
+
+            this.state = State.WaitingToBuy;
 
             return;
         }

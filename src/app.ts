@@ -3,7 +3,7 @@ import { IAlgorithm } from './interfaces/algorithm';
 import { LunoTrader } from './traders/luno';
 
 (async () => {
-    const algorithm: IAlgorithm = new Algorithm1();
+    const algorithm: IAlgorithm = new Algorithm1(null);
     const trader = new LunoTrader(algorithm);
 
     while (true) {

@@ -20,6 +20,10 @@ export class Queue<T> {
         this.data.push(item);
     }
 
+    public getLast(): T {
+        return this.data[this.data.length - 1];
+    }
+
     public isFull(): boolean {
         return this.data.length === this.size;
     }
