@@ -46,7 +46,7 @@ export class TraderAlgorithm1 implements ITraderAlgorithm {
             console.log(`Average Growth: ${this.currentAverageGrowth}`);
             console.log(`Delta Average Growth: ${this.deltaAverageGrowth}`);
 
-            fs.appendFileSync(path.join(__dirname, 'data.log'), `${moment().format('YYYY-MM-DD HH:mm:ss')};${this.dataPointQueue.getLast().price.toString().replace('.', ',')};${this.currentAverageGrowth.toString().replace('.', ',')};${this.deltaAverageGrowth.toString().replace('.', ',')}\r\n`);
+            fs.appendFileSync(path.join(__dirname, `log-${moment().format('YYYY-MM-DD')}.csv`), `${moment().format('YYYY-MM-DD HH:mm:ss')};${this.dataPointQueue.getLast().price.toString().replace('.', ',')};${this.currentAverageGrowth.toString().replace('.', ',')};${this.deltaAverageGrowth.toString().replace('.', ',')}\r\n`);
         }
     }
 
