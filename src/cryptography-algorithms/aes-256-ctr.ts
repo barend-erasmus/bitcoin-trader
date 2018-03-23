@@ -2,7 +2,7 @@ import * as crypto from 'crypto';
 
 import { ICryptographyAlgorithm } from '../interfaces/cryptography-algorithm';
 
-export class AES128CTRCryptographyAlgorithm implements ICryptographyAlgorithm {
+export class AES256CTRCryptographyAlgorithm implements ICryptographyAlgorithm {
 
     constructor(
         private password: string,
