@@ -22,7 +22,7 @@ export class LunoDataSource implements IDataSource {
     public async getCurrentBTCPrice(): Promise<number> {
         const ticker: any = await this.getTicker();
 
-        return ticker.last_trade;
+        return parseFloat(ticker.last_trade);
     }
 
     public async getZARBalance(): Promise<number> {

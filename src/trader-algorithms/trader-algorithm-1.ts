@@ -12,7 +12,7 @@ export class TraderAlgorithm1 implements ITraderAlgorithm {
 
     private currentAverageGrowth: number = null;
 
-    private dataPointQueue: Queue<DataPoint> = new Queue<DataPoint>(10);
+    private dataPointQueue: Queue<DataPoint> = new Queue<DataPoint>(5);
 
     private deltaAverageGrowth: number = null;
 
@@ -126,6 +126,6 @@ export class TraderAlgorithm1 implements ITraderAlgorithm {
     }
 
     private numberToString(value: number): string {
-        return value ? value.toString().replace('.', ',') : null;
+        return value ? value.toString().replace('.', ',') : '0';
     }
 }

@@ -28,7 +28,7 @@ import { Trader1 } from './traders/trader-1';
             console.error(err);
         }
 
-        await delay(14000);
+        await delay(60000);
     }
 })();
 
