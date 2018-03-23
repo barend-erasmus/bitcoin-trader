@@ -29,29 +29,33 @@ export class TraderAlgorithm1 implements ITraderAlgorithm {
     }
 
     public onBuy(price: number): void {
-        console.log(`Bought for ${price}`);
+        console.log(`Bought for ${this.numberToString(price)}`);
 
         this.previousBuyPrice = price;
     }
 
     public onChange(price: number): void {
         this.dataPointQueue.enqueue(new DataPoint(price, new Date()));
-        console.log(`Price updated ${price}`);
+        console.log(`Price updated ${this.numberToString(price)}`);
 
         this.setGrowths();
 
         this.checkEmergencySellRules(price);
 
         if (this.dataPointQueue.isFull()) {
-            console.log(`Average Growth: ${this.currentAverageGrowth}`);
-            console.log(`Delta Average Growth: ${this.deltaAverageGrowth}`);
+            console.log(`Average Growth: ${this.numberToString(this.currentAverageGrowth)}`);
+            console.log(`Delta Average Growth: ${this.numberToString(this.deltaAverageGrowth)}`);
 
-            fs.appendFileSync(path.join(__dirname, `log-${moment().format('YYYY-MM-DD')}.csv`), `${moment().format('YYYY-MM-DD HH:mm:ss')};${this.dataPointQueue.getLast().price.toString().replace('.', ',')};${this.currentAverageGrowth.toString().replace('.', ',')};${this.deltaAverageGrowth.toString().replace('.', ',')}\r\n`);
+            fs.appendFileSync(path.join(__dirname, `log-${moment().format('YYYY-MM-DD')}.csv`), `${moment().format('YYYY-MM-DD HH:mm:ss')};${this.numberToString(this.dataPointQueue.getLast().price)};${this.numberToString(this.currentAverageGrowth)};${this.numberToString(this.deltaAverageGrowth)}\r\n`);
         }
     }
 
     public onSell(price: number): void {
-        console.log(`Sold for ${price}`);
+        console.log(`Sold for ${this.numberToString(price)}`);
+
+        console.log(`Profit: ${this.numberToString(price - this.previousBuyPrice)}`);
+
+        fs.appendFileSync(path.join(__dirname, `log-profit-${moment().format('YYYY-MM-DD')}.csv`), `${this.numberToString(price - this.previousBuyPrice)}`);
     }
 
     public shouldBuy(state: State): boolean {
@@ -114,10 +118,14 @@ export class TraderAlgorithm1 implements ITraderAlgorithm {
     }
 
     private checkEmergencySellRules(price: number): void {
-        if (this.currentAverageGrowth < 0) {
+        if (this.currentAverageGrowth < -0.3) {
             this.emergencySell = true;
         } else if (this.previousBuyPrice && (price / this.previousBuyPrice * 100) - 100 < this.emergencySellThreshold) {
-            this.emergencySell = true;
+            // this.emergencySell = true;
         }
+    }
+
+    private numberToString(value: number): string {
+        return value ? value.toString().replace('.', ',') : null;
     }
 }
