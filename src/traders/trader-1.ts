@@ -18,7 +18,7 @@ export class Trader1 implements ITrader {
 
     private state: State = State.WaitingToBuy;
 
-    private maxZARBuyLimit: number = 200;
+    private maxZARBuyLimit: number = 150;
 
     constructor(
         private dataSource: IDataSource,
@@ -38,7 +38,7 @@ export class Trader1 implements ITrader {
         const shouldBuy: boolean = this.traderAlgorithm.shouldBuy(this.state);
 
         if (shouldBuy) {
-            // const result: any = await this.postBuyOrder(Math.floor(this.maxZARBuyLimit / this.currentBTCPrice * 1000000) / 1000000, this.currentBTCPrice);
+            const result: any = await this.orderCreator.placeBuyOrder(Math.floor(this.maxZARBuyLimit / this.currentBTCPrice * 1000000) / 1000000, this.currentBTCPrice);
 
             this.traderAlgorithm.onBuy(this.currentBTCPrice);
 
@@ -50,7 +50,7 @@ export class Trader1 implements ITrader {
         const shouldSell: boolean = this.traderAlgorithm.shouldSell(this.state);
 
         if (shouldSell) {
-            // const result: any = await this.postSellOrder(Math.floor(this.currentBTCBalance * 1000000) / 1000000, this.currentBTCPrice);
+            const result: any = await this.orderCreator.placeSellOrder(Math.floor(this.currentBTCBalance * 1000000) / 1000000, this.currentBTCPrice);
 
             this.traderAlgorithm.onSell(this.currentBTCPrice);
 
